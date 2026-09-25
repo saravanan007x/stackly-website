@@ -1,57 +1,211 @@
-// 1. Live clock in the navbar
-const clock = document.getElementById('clock');
-function updateClock() {
-  clock.textContent = new Date().toLocaleTimeString('en-GB');
+/* =====================================================
+   PRODUCT CARD SCROLL REVEAL
+===================================================== */
+
+const cards = document.querySelectorAll(".card");
+
+const reduceMotion =
+    window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+
+if (
+    "IntersectionObserver" in window &&
+    !reduceMotion
+) {
+
+    const cardObserver =
+        new IntersectionObserver(
+
+            (entries) => {
+
+                entries.forEach((entry) => {
+
+                    if (entry.isIntersecting) {
+
+                        const card =
+                            entry.target;
+
+                        const index =
+                            Array
+                                .from(cards)
+                                .indexOf(card);
+
+                        const delay =
+                            (index % 3) * 90;
+
+
+                        setTimeout(() => {
+
+                            card.classList.add(
+                                "in-view"
+                            );
+
+                        }, delay);
+
+
+                        cardObserver.unobserve(card);
+                    }
+
+                });
+
+            },
+
+            {
+                threshold: 0.15
+            }
+
+        );
+
+
+    cards.forEach((card) => {
+
+        cardObserver.observe(card);
+
+    });
+
+} else {
+
+    cards.forEach((card) => {
+
+        card.classList.add(
+            "in-view"
+        );
+
+    });
+
 }
-updateClock();
-setInterval(updateClock, 1000);
 
-// 2. Navbar background after scrolling
-const nav = document.querySelector('.nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 50);
-});
 
-// 3. Mobile menu
-const burger = document.getElementById('burger');
-const menu = document.getElementById('menu');
-burger.addEventListener('click', () => menu.classList.toggle('open'));
-menu.querySelectorAll('a').forEach(link =>
-  link.addEventListener('click', () => menu.classList.remove('open'))
-);
 
-// 4. Reveal elements when they come into view
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('show');
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.2 });
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+/* =====================================================
+   FOOTER REVEAL
+===================================================== */
 
-// 5. Count-up numbers
-const counters = document.querySelectorAll('[data-count]');
-const countObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    const el = entry.target;
-    const goal = +el.dataset.count;
-    let current = 0;
-    const timer = setInterval(() => {
-      current++;
-      el.textContent = current;
-      if (current >= goal) clearInterval(timer);
-    }, 1500 / goal);
-    countObserver.unobserve(el);
-  });
-}, { threshold: 0.5 });
-counters.forEach(c => countObserver.observe(c));
+const footerElements =
+    document.querySelectorAll(
+        ".foot-fade"
+    );
 
-// 6. Simple contact form message
-document.getElementById('form').addEventListener('submit', e => {
-  e.preventDefault();
-  document.getElementById('msg').textContent = 'Thanks! We will contact you soon.';
-  e.target.reset();
-});
+
+if (
+    "IntersectionObserver" in window &&
+    !reduceMotion
+) {
+
+    const footerObserver =
+        new IntersectionObserver(
+
+            (entries) => {
+
+                entries.forEach(
+                    (entry, index) => {
+
+                        if (
+                            entry.isIntersecting
+                        ) {
+
+                            const element =
+                                entry.target;
+
+
+                            setTimeout(() => {
+
+                                element.classList.add(
+                                    "in-view"
+                                );
+
+                            }, index * 80);
+
+
+                            footerObserver.unobserve(
+                                element
+                            );
+                        }
+
+                    }
+                );
+
+            },
+
+            {
+                threshold: 0.2
+            }
+
+        );
+
+
+    footerElements.forEach((element) => {
+
+        footerObserver.observe(element);
+
+    });
+
+} else {
+
+    footerElements.forEach((element) => {
+
+        element.classList.add(
+            "in-view"
+        );
+
+    });
+
+}
+
+
+
+/* =====================================================
+   RETRO IMAGE REVEAL
+===================================================== */
+
+const retroImages =
+    document.querySelectorAll(
+        ".retro-main, .retro-photo"
+    );
+
+
+if (
+    "IntersectionObserver" in window &&
+    !reduceMotion
+) {
+
+    const imageObserver =
+        new IntersectionObserver(
+
+            (entries) => {
+
+                entries.forEach((entry) => {
+
+                    if (
+                        entry.isIntersecting
+                    ) {
+
+                        entry.target.classList.add(
+                            "image-visible"
+                        );
+
+                        imageObserver.unobserve(
+                            entry.target
+                        );
+                    }
+
+                });
+
+            },
+
+            {
+                threshold: 0.2
+            }
+
+        );
+
+
+    retroImages.forEach((image) => {
+
+        imageObserver.observe(image);
+
+    });
+
+}
