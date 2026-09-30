@@ -1,211 +1,131 @@
-/* =====================================================
-   PRODUCT CARD SCROLL REVEAL
-===================================================== */
+/* ================= NAVBAR ================= */
 
-const cards = document.querySelectorAll(".card");
+const navbar = document.getElementById("navbar");
 
-const reduceMotion =
-    window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-    ).matches;
+window.addEventListener("scroll", () => {
 
+    if (window.scrollY > 80) {
+        navbar.classList.add("scrolled");
+    } else {
+        navbar.classList.remove("scrolled");
+    }
 
-if (
-    "IntersectionObserver" in window &&
-    !reduceMotion
-) {
-
-    const cardObserver =
-        new IntersectionObserver(
-
-            (entries) => {
-
-                entries.forEach((entry) => {
-
-                    if (entry.isIntersecting) {
-
-                        const card =
-                            entry.target;
-
-                        const index =
-                            Array
-                                .from(cards)
-                                .indexOf(card);
-
-                        const delay =
-                            (index % 3) * 90;
+});
 
 
-                        setTimeout(() => {
+/* ================= MOBILE MENU ================= */
 
-                            card.classList.add(
-                                "in-view"
-                            );
+const menuBtn = document.getElementById("menuBtn");
+const nav = document.querySelector(".navbar nav");
 
-                        }, delay);
+menuBtn.addEventListener("click", () => {
 
+    nav.classList.toggle("mobile-active");
 
-                        cardObserver.unobserve(card);
-                    }
-
-                });
-
-            },
-
-            {
-                threshold: 0.15
-            }
-
-        );
+});
 
 
-    cards.forEach((card) => {
+/* ================= SCROLL REVEAL ================= */
 
-        cardObserver.observe(card);
-
-    });
-
-} else {
-
-    cards.forEach((card) => {
-
-        card.classList.add(
-            "in-view"
-        );
-
-    });
-
-}
-
-
-
-/* =====================================================
-   FOOTER REVEAL
-===================================================== */
-
-const footerElements =
+const revealElements =
     document.querySelectorAll(
-        ".foot-fade"
+        ".reveal, .reveal-left, .reveal-right"
     );
 
+const observer = new IntersectionObserver(
+    (entries) => {
 
-if (
-    "IntersectionObserver" in window &&
-    !reduceMotion
-) {
+        entries.forEach((entry) => {
 
-    const footerObserver =
-        new IntersectionObserver(
+            if (entry.isIntersecting) {
 
-            (entries) => {
+                entry.target.classList.add("active");
 
-                entries.forEach(
-                    (entry, index) => {
+                observer.unobserve(entry.target);
 
-                        if (
-                            entry.isIntersecting
-                        ) {
-
-                            const element =
-                                entry.target;
-
-
-                            setTimeout(() => {
-
-                                element.classList.add(
-                                    "in-view"
-                                );
-
-                            }, index * 80);
-
-
-                            footerObserver.unobserve(
-                                element
-                            );
-                        }
-
-                    }
-                );
-
-            },
-
-            {
-                threshold: 0.2
             }
 
-        );
+        });
+
+    },
+    {
+        threshold: 0.15
+    }
+);
+
+revealElements.forEach((element) => {
+
+    observer.observe(element);
+
+});
 
 
-    footerElements.forEach((element) => {
+/* ================= COUNTERS ================= */
 
-        footerObserver.observe(element);
+const counters =
+    document.querySelectorAll(".counter");
 
-    });
+const counterObserver = new IntersectionObserver(
+    (entries, observer) => {
 
-} else {
+        entries.forEach((entry) => {
 
-    footerElements.forEach((element) => {
+            if (!entry.isIntersecting) return;
 
-        element.classList.add(
-            "in-view"
-        );
+            const counter = entry.target;
 
-    });
+            const target =
+                Number(counter.dataset.target);
 
-}
+            let current = 0;
 
+            const duration = 1800;
 
+            const startTime = performance.now();
 
-/* =====================================================
-   RETRO IMAGE REVEAL
-===================================================== */
+            function updateCounter(time) {
 
-const retroImages =
-    document.querySelectorAll(
-        ".retro-main, .retro-photo"
-    );
+                const progress =
+                    Math.min(
+                        (time - startTime) / duration,
+                        1
+                    );
 
+                current =
+                    Math.floor(
+                        progress * target
+                    );
 
-if (
-    "IntersectionObserver" in window &&
-    !reduceMotion
-) {
+                counter.textContent = current;
 
-    const imageObserver =
-        new IntersectionObserver(
+                if (progress < 1) {
 
-            (entries) => {
+                    requestAnimationFrame(
+                        updateCounter
+                    );
 
-                entries.forEach((entry) => {
+                } else {
 
-                    if (
-                        entry.isIntersecting
-                    ) {
+                    counter.textContent = target;
 
-                        entry.target.classList.add(
-                            "image-visible"
-                        );
+                }
 
-                        imageObserver.unobserve(
-                            entry.target
-                        );
-                    }
-
-                });
-
-            },
-
-            {
-                threshold: 0.2
             }
 
-        );
+            requestAnimationFrame(updateCounter);
 
+            observer.unobserve(counter);
 
-    retroImages.forEach((image) => {
+        });
 
-        imageObserver.observe(image);
+    },
+    {
+        threshold: 0.5
+    }
+);
 
-    });
+counters.forEach((counter) => {
 
-}
+    counterObserver.observe(counter);
+
+});
